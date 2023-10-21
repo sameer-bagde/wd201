@@ -32,7 +32,6 @@ describe("Todo Application", function () {
     agent = request.agent(server);
     const res = await agent.get("/");
     const csrfToken = extractCsrfToken(res);
-    console.log(csrfToken);
     const response = await agent.post("/todos").send({
       _csrf: csrfToken,
       title: "Buy milk",
@@ -45,7 +44,6 @@ describe("Todo Application", function () {
   test("Mark a todo as complete", async () => {
     agent = request.agent(server);
     let res = await agent.get("/");
-    console.log(res);
     let csrfToken = extractCsrfToken(res);
     console.log(csrfToken);
     await agent.post("/todos").send({
@@ -72,7 +70,6 @@ describe("Todo Application", function () {
       .put(`/todos/${latestTodo.id}/markAsCompleted`)
       .send({
         _csrf: csrfToken,
-        
       });
     const parsedUpdateResponse = JSON.parse(markCompleteResponse.text);
     expect(parsedUpdateResponse.completed).toBe(true);
