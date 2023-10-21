@@ -45,13 +45,13 @@ describe("Todo Application", function () {
     agent = request.agent(server);
     let res = await agent.get("/");
     let csrfToken = extractCsrfToken(res);
-    console.log(csrfToken);
     await agent.post("/todos").send({
       _csrf: csrfToken,
       title: "Buy milk",
       dueDate: new Date().toISOString(),
       completed: false,
     });
+
 
     const groupedTodosResponse = await agent
       .get("/")
@@ -80,6 +80,9 @@ describe("Todo Application", function () {
         // Handle the error or failure condition appropriately
       }
   });
+
+
+
   // test("Marks a todo with the given ID as complete", async () => {
   //   const dueDate = new Date().toISOString();
   //   const createResponse = await agent.post("/todos").send({
