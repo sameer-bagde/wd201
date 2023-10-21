@@ -144,7 +144,7 @@ describe("Todo Application", function () {
     // expect(deleted).toBe(true);
   });
 
-  test(" Should toggle a completed item to incomplete when clicked on it", async () => {
+  test("Should toggle a completed item to incomplete when clicked on it", async () => {
     agent = request.agent(server);
     const res = await agent.get("/");
     const csrfToken = extractCsrfToken(res);
