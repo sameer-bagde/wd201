@@ -72,9 +72,10 @@ describe("Todo Application", function () {
       .put(`/todos/${latestTodo.id}/markAsCompleted`)
       .send({
         _csrf: csrfToken,
+        
       });
-    // const parsedUpdateResponse = JSON.parse(markCompleteResponse.text);
-    // expect(parsedUpdateResponse.completed).toBe(true);
+    const parsedUpdateResponse = JSON.parse(markCompleteResponse.text);
+    expect(parsedUpdateResponse.completed).toBe(true);
   });
   // test("Marks a todo with the given ID as complete", async () => {
   //   const dueDate = new Date().toISOString();
