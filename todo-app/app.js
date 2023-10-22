@@ -18,13 +18,76 @@ var cookieParser = require("cookie-parser");
 app.use(cookieParser("shh! some secret string"));
 app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 
+const passport = require('passport');  // authentication
+const connectEnsureLogin = require('connect-ensure-login'); //authorization
+const session = require('express-session');  // session middleware for cookie support
+const LocalStrategy = require('passport-local').Strategy
+
+app.use(session({
+  secret: 'my-super-secret-key-7218728182782818218782718hsjahsu8as8a8su88',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 24* 60 * 60 * 1000 } // 24 hour
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(
+  {
+    usernameField: 'email',
+    passwordField: 'password'
+  },
+  function(username, password, done) {
+    User.findOne({ where: { email: username, password: password } }).then(function(user) {
+      return done(null, user);
+    }).catch((error) => {
+      return done(error);
+    });
+  }
+));
+
+passport.serializeUser(function(user, done) {
+  console.log("Serializing user in session: ", user.id)
+  done(null, user.id); 
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findByPk(id)
+    .then((user) => {
+      done(null, user);
+    })
+    .catch((error) => {
+      done(error, null);
+    });
+});
+
+
+app.get('/todos', connectEnsureLogin.ensureLoggedIn(), async function (request, response) {
+  const todos = await Todo.findAll().catch((error) => {
+    console.log(error)
+  })
+  response.render("todos");
+})
+
+
 app.get("/", async (request, response) => {
+
+    response.render("index", {
+      title: "Todo application",
+      csrfToken: request.csrfToken(),
+    });
+});
+
+
+
+app.get("/todo", async (request, response) => {
   const overdue = await Todo.overdue();
   const dueToday = await Todo.dueToday();
   const dueLater = await Todo.dueLater();
   const completedItems = await Todo.completedItems();
   if (request.accepts("html")) {
-    response.render("index", {
+    response.render("todo", {
       title: "Todo application",
       overdue,
       dueToday,
@@ -47,11 +110,22 @@ app.get("/signup", (request, response) => {
 });
 
 app.post('/users', async function (request, response) {
-  // Have to create user here.
-  console.log("firstName", request.body.firstName)
-  console.log("lastName", request.body.lastName)
-  console.log("email", request.body.email)
-  console.log("password", request.body.password)
+  const user = await User.create({ 
+    firstName: request.body.firstName,
+    lastName: request.body.lastName,
+    email: request.body.email, 
+    password: request.body.password 
+  }).catch((error) => {
+    console.log(error)
+  });
+  // Initialize session after successful signup
+  request.login(user, function(err) {
+    if (err) {
+      console.log(err);
+    }
+    return response.redirect('/todos');
+  });
+  // response.redirect("/todos"); // Redirected to root path
 })
 
 app.get("/todos", async function (_request, response) {
