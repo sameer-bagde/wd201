@@ -2,12 +2,12 @@
 /* eslint-disable no-undef */
 const express = require("express");
 const app = express();
-const { Todo } = require("./models");
+const { User, Todo } = require("./models");
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 const path = require("path");
 app.use(express.static(path.join(__dirname, "public")));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
 var csrf = require("tiny-csrf");
@@ -15,7 +15,6 @@ var csrf = require("tiny-csrf");
 // ...
 var cookieParser = require("cookie-parser");
 
-app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser("shh! some secret string"));
 app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 
@@ -42,6 +41,18 @@ app.get("/", async (request, response) => {
     });
   }
 });
+
+app.get("/signup", (request, response) => {
+  response.render("signup", {title: "signup" ,  csrfToken: request.csrfToken()});
+});
+
+app.post('/users', async function (request, response) {
+  // Have to create user here.
+  console.log("firstName", request.body.firstName)
+  console.log("lastName", request.body.lastName)
+  console.log("email", request.body.email)
+  console.log("password", request.body.password)
+})
 
 app.get("/todos", async function (_request, response) {
   console.log("Processing list of all Todos ...");
