@@ -2,12 +2,12 @@
 /* eslint-disable no-undef */
 const express = require("express");
 const app = express();
-const { Todo } = require("./models");
+const { User, Todo } = require("./models");
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 const path = require("path");
 app.use(express.static(path.join(__dirname, "public")));
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.set("view engine", "ejs");
 
 var csrf = require("tiny-csrf");
@@ -80,17 +80,6 @@ app.post("/todos", async (request, response) => {
   }
 });
 
-// app.put("/todos/:id/markAsCompleted", async (request, response) => {
-//   console.log("We have to update a todo with ID:", request.params.id);
-//   const todo = await Todo.findByPk(request.params.id);
-//   try {
-//     const updatedTodo = await todo.markAsCompleted();
-//     return response.json(updatedTodo);
-//   } catch (error) {
-//     console.log(error);
-//     return response.status(422).json(error);
-//   }
-// });
 
 app.put("/todos/:id", async (request, response) => {
   console.log("/n We have completed a todo with ID:", request.params.id);
@@ -113,5 +102,84 @@ app.delete("/todos/:id", async (request, response) => {
     return response.status(422).json(error);
   }
 });
+
+
+
+app.get("/signup", (request, response) => {
+  response.render("signup", { csrfToken: request.csrfToken() });
+});
+
+app.post('/users', async function (request, response) {
+  const user = await User.create({ 
+    firstName: request.body.firstName,
+    lastName: request.body.lastName,
+    email: request.body.email, 
+    password: request.body.password 
+  }).catch((error) => {
+    console.log(error)
+  });
+  // Initialize session after successful signup
+  request.login(user, function(err) {
+    if (err) {
+      console.log(err);
+    }
+    return response.redirect('/todos');
+  });
+  // response.redirect("/todos"); // Redirected to root path
+})
+
+const passport = require('passport');  // authentication
+const connectEnsureLogin = require('connect-ensure-login'); //authorization
+const session = require('express-session');  // session middleware for cookie support
+const LocalStrategy = require('passport-local').Strategy
+
+app.use(session({
+  secret: 'my-super-secret-key-7218728182782818218782718hsjahsu8as8a8su88',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 24* 60 * 60 * 1000 } // 24 hour
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+passport.use(new LocalStrategy(
+  {
+    usernameField: 'email',
+    passwordField: 'password'
+  },
+  function(username, password, done) {
+    User.findOne({ where: { email: username, password: password } }).then(function(user) {
+      return done(null, user);
+    }).catch((error) => {
+      return done(error);
+    });
+  }
+));
+
+passport.serializeUser(function(user, done) {
+  console.log("Serializing user in session: ", user.id)
+  done(null, user.id); 
+});
+
+passport.deserializeUser(function(id, done) {
+  User.findByPk(id)
+    .then((user) => {
+      done(null, user);
+    })
+    .catch((error) => {
+      done(error, null);
+    });
+});
+
+
+app.get('/todos', connectEnsureLogin.ensureLoggedIn(), async function (request, response) {
+  const todos = await Todo.findAll().catch((error) => {
+    console.log(error)
+  })
+  response.render("todos");
+})
+
+
 
 module.exports = app;
