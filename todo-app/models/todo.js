@@ -16,6 +16,8 @@ module.exports = (sequelize, DataTypes) => {
         onDelete: 'CASCADE'
       })
     }
+
+    
     static async remove(id) {
       return this.destroy({
         where: {
