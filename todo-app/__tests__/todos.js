@@ -137,11 +137,7 @@ describe("Todo Application", function () {
     });
     const boolean = Boolean(response.text);
     expect(boolean).toBe(true);
-    // const createdTodo = JSON.parse(createResponse.text);
-    // const todoID = createdTodo.id;
-    // const deleteResponse = await agent.delete(`/todos/${todoID}`).send();
-    // const deleted = JSON.parse(deleteResponse.text);
-    // expect(deleted).toBe(true);
+
   });
 
   test("Should toggle a completed item to incomplete when clicked on it", async () => {

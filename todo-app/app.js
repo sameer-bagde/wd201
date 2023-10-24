@@ -2,7 +2,7 @@
 /* eslint-disable no-undef */
 const express = require("express");
 const app = express();
-const { Todo } = require("./models");
+const { User, Todo } = require("./models");
 const bodyParser = require("body-parser");
 app.use(bodyParser.json());
 const path = require("path");
@@ -15,17 +15,113 @@ var csrf = require("tiny-csrf");
 // ...
 var cookieParser = require("cookie-parser");
 
-app.use(express.urlencoded({ extended: false }));
+app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser("shh! some secret string"));
 app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 
+const passport = require('passport');  // authentication
+const connectEnsureLogin = require('connect-ensure-login'); //authorization
+const session = require('express-session');  // session middleware for cookie support
+const LocalStrategy = require('passport-local').Strategy
+
+app.use(session({
+  secret: 'my-super-secret-key-7218728182782818218782718hsjahsu8as8a8su88',
+  resave: false,
+  saveUninitialized: true,
+  cookie: { maxAge: 24* 60 * 60 * 1000 } // 24 hour
+}));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+
+passport.use(new LocalStrategy(
+  {
+    usernameField: 'email',
+    passwordField: 'password'
+  },
+  function(username, password, done) {
+    User.findOne({ where: { email: username, password: password } }).then(function(user) {
+      return done(null, user);
+    }).catch((error) => {
+      return done(error);
+    });
+  }
+));
+
+
+passport.serializeUser(function(user, done) {
+  console.log("Serializing user in session: ", user.id)
+  done(null, user.id); 
+});
+
+
+passport.deserializeUser(function(id, done) {
+  User.findByPk(id)
+    .then((user) => {
+      done(null, user);
+    })
+    .catch((error) => {
+      done(error, null);
+    });
+});
+
+
+
+
+
+
+// sign
+
+app.get("/signup", (request, response) => {
+  response.render("signup", { csrfToken: request.csrfToken() });
+});
+
+
+
+
+app.post('/users', async function (request, response) {
+  console.log("firstname", request.body.firstName);
+  try{
+    const user = await User.create({ 
+      firstName: request.body.firstName,
+      lastName: request.body.lastName,
+      email: request.body.email, 
+      password: request.body.password 
+    });
+    request.login(user, function(err) {
+      if (err) {
+        console.log(err);
+      }
+      return response.redirect('/todos');
+  })
+}
+catch(error)  {
+  console.log(error);
+}
+  
+})
+
+
+// sign
+
+
 app.get("/", async (request, response) => {
+    response.render("index", {
+      title: "Todo application",
+      csrfToken: request.csrfToken(),
+    });
+});
+
+
+app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
+  console.log(request.user);
   const overdue = await Todo.overdue();
   const dueToday = await Todo.dueToday();
   const dueLater = await Todo.dueLater();
   const completedItems = await Todo.completedItems();
   if (request.accepts("html")) {
-    response.render("index", {
+    response.render("todos", {
       title: "Todo application",
       overdue,
       dueToday,
