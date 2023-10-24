@@ -2,38 +2,46 @@
 /* eslint-disable no-undef */
 const express = require("express");
 const app = express();
-const { User, Todo } = require("./models");
+var csrf = require("tiny-csrf");
 const bodyParser = require("body-parser");
-app.use(bodyParser.json());
+var cookieParser = require("cookie-parser");
 const path = require("path");
-app.use(express.static(path.join(__dirname, "public")));
-app.use(express.urlencoded({ extended: false }));
 app.set("view engine", "ejs");
 
-var csrf = require("tiny-csrf");
+const passport = require("passport");
+const connectEnsureLogin = require("connect-ensure-login");
+const session = require("express-session");
+const LocalStrategy = require("passport-local");
+const bcrypt = require("bcrypt");
+const flash = require("connect-flash");
 
-// ...
-var cookieParser = require("cookie-parser");
+const saltRounds = 10;
 
-app.use(express.urlencoded({ extended: true }));
+app.use(express.static(path.join(__dirname, "public")));
+app.set("views", path.join(__dirname, "views"));
+app.use(express.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 app.use(cookieParser("shh! some secret string"));
 app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
+app.use(flash());
 
-const passport = require('passport');  // authentication
-const connectEnsureLogin = require('connect-ensure-login'); //authorization
-const session = require('express-session');  // session middleware for cookie support
-const LocalStrategy = require('passport-local').Strategy
+const { Todo, User } = require("./models");
 
-app.use(session({
-  secret: 'my-super-secret-key-7218728182782818218782718hsjahsu8as8a8su88',
-  resave: false,
-  saveUninitialized: true,
-  cookie: { maxAge: 24* 60 * 60 * 1000 } // 24 hour
-}));
+app.use(
+  session({
+    secret: "my-super-secret-key-23487623476321414726",
+    cookie: {
+      maxAge: 24 * 60 * 60 * 1000,
+    },
+  }),
+);
 
 app.use(passport.initialize());
 app.use(passport.session());
-
+app.use(function (request, response, next) {
+  response.locals.messages = request.flash();
+  next();
+});
 
 passport.use(new LocalStrategy(
   {
@@ -41,10 +49,17 @@ passport.use(new LocalStrategy(
     passwordField: 'password'
   },
   function(username, password, done) {
-    User.findOne({ where: { email: username, password: password } }).then(function(user) {
-      return done(null, user);
-    }).catch((error) => {
-      return done(error);
+    User.findOne({ where: { email: username } })
+    .then(async function (user) {
+      const result = await bcrypt.compare(password, user.password);
+      if (result) {
+        return done(null, user);
+      } else {
+        return done(null, false, { message: "Invalid password" });
+      }
+    })
+    .catch((error) => {
+      return done(err);
     });
   }
 ));
@@ -116,10 +131,12 @@ app.get("/", async (request, response) => {
 
 app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   console.log(request.user);
-  const overdue = await Todo.overdue();
-  const dueToday = await Todo.dueToday();
-  const dueLater = await Todo.dueLater();
-  const completedItems = await Todo.completedItems();
+  const loggedInUser = request.user.id;
+
+  const overdue = await Todo.overdue(loggedInUser);
+  const dueToday = await Todo.dueToday(loggedInUser);
+  const dueLater = await Todo.dueLater(loggedInUser);
+  const completedItems = await Todo.completedItems(loggedInUser);
   if (request.accepts("html")) {
     response.render("todos", {
       title: "Todo application",

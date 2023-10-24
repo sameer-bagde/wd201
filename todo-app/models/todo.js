@@ -18,10 +18,11 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     
-    static async remove(id) {
+    static async remove(id, userId) {
       return this.destroy({
         where: {
           id,
+          userId,
         },
       });
     }
@@ -30,7 +31,7 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll();
     }
 
-    static addTodo({ title, dueDate }) {
+    static addTodo({ title, dueDate, userId  }) {
       if (!title || !dueDate) {
         console.log("Title and dueDate required");
       } else {
@@ -38,6 +39,7 @@ module.exports = (sequelize, DataTypes) => {
           title: title,
           dueDate: dueDate,
           completed: false,
+          userId,
         });
       }
     }
@@ -46,52 +48,63 @@ module.exports = (sequelize, DataTypes) => {
       return this.update({ completed: true });
     }
 
-    static completedItems() {
+    static completedItems(userId) {
       return this.findAll({
         where: {
           completed: true,
+          userId: userId,
         },
         order: [["id", "ASC"]],
       });
     }
+
+
     setCompletionStatus(bool) {
       return this.update({ completed: bool });
     }
 
-    static overdue() {
+    static overdue(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.lt]: new Date().toLocaleDateString("en-CA"),
           },
+          userId: userId,
           completed: false,
         },
         order: [["id", "ASC"]],
       });
     }
-    static dueToday() {
+
+
+    static dueToday(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.eq]: new Date().toLocaleDateString("en-CA"),
           },
+          userId: userId,
           completed: false,
         },
         order: [["id", "ASC"]],
       });
     }
-    static dueLater() {
+
+    
+    static dueLater(userId) {
       return this.findAll({
         where: {
           dueDate: {
             [Op.gt]: new Date().toLocaleDateString("en-CA"),
           },
+          userId: userId,
           completed: false,
         },
         order: [["id", "ASC"]],
       });
     }
   }
+
   Todo.init(
     {
       title: DataTypes.STRING,
