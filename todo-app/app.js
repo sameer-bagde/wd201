@@ -29,7 +29,7 @@ const { Todo, User } = require("./models");
 
 app.use(
   session({
-    secret: "my-super-secret-key-23487623476321414726",
+    secret: "my-super-secret-key-7218728182782818218782718",
     cookie: {
       maxAge: 24 * 60 * 60 * 1000,
     },
