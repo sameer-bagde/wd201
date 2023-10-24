@@ -3,7 +3,8 @@
 <html lang="en">
   <head>
     <title>TO-DO Manager</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />    
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />   
+    <meta name="csrf-token" content="<%= csrfToken %>" />
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/public/css/styles.css">
 
@@ -55,6 +56,13 @@ function deleteTodo(id) {
       <div class = "col-start-3 col-span-2">  
           <%- include('header.ejs') %>
           <div>
+            <form action="/signout" method="delete">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
+              <button type="submit">Sign Out</button>
+            </form>
+          </div>
+
+          <div>
             <form action="/todos" method="POST">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
               <div class="flex gap-2 py-4">
@@ -91,4 +99,5 @@ function deleteTodo(id) {
           <%- include("todo.ejs",{title:"Due Later", data:dueLater, id:"count-due-later"}) %>
           <%- include("todo.ejs",{title:"Completed Items", data:completedItems, id:"count-completed"}) %>
           <%- include('footer.ejs') %>
+
 </html>
