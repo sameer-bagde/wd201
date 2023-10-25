@@ -50,16 +50,20 @@ passport.use(new LocalStrategy(
   },
   function(username, password, done) {
     User.findOne({ where: { email: username } })
-    .then(async function (user) {
-      const result = await bcrypt.compare(password, user.password);
-      if (result) {
-        return done(null, user);
-      } else {
-        return done(null, false, { message: "Invalid password" });
-      }
+    .then(async function (user) { 
+      if (user) { 
+        const resultantPass = await bcrypt.compare(password, user.password); 
+        if (resultantPass) { 
+          return done(null, user); 
+        } else { 
+          return done(null, false, { message: "Invalid Password" }); 
+        } 
+      } else { 
+        return done(null, false, { message: "User Does Not Exist" }); 
+      } 
     })
     .catch((error) => {
-      return done(err);
+      return done(error);
     });
   }
 ));
@@ -97,12 +101,15 @@ app.get("/signup", (request, response) => {
 
 app.post('/users', async function (request, response) {
   console.log("firstname", request.body.firstName);
+  const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
+  console.log(hashedPwd);
+  console.log(request.user);
   try{
     const user = await User.create({ 
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       email: request.body.email, 
-      password: request.body.password 
+      password: hashedPwd,
     });
     request.login(user, function(err) {
       if (err) {
@@ -120,6 +127,32 @@ catch(error)  {
 
 // sign
 
+// login
+app.get("/login", (request, response) => {
+  response.render("login", { csrfToken: request.csrfToken() });
+});
+
+
+app.post('/session', passport.authenticate('local', { failureRedirect: '/login' }),  function(request, response) {
+  console.log(request.user)
+	response.redirect('/todos');
+});
+
+// login
+
+// delete
+
+app.get('/signout', function(request, response, next) {
+  request.logout(function(err) {
+    if (err) { return next(err); }
+    response.redirect('/');
+  });
+});
+
+// delete
+
+
+
 
 app.get("/", async (request, response) => {
     response.render("index", {
@@ -132,7 +165,6 @@ app.get("/", async (request, response) => {
 app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   console.log(request.user);
   const loggedInUser = request.user.id;
-
   const overdue = await Todo.overdue(loggedInUser);
   const dueToday = await Todo.dueToday(loggedInUser);
   const dueLater = await Todo.dueLater(loggedInUser);
@@ -156,19 +188,19 @@ app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response)
   }
 });
 
-app.get("/todos", async function (_request, response) {
-  console.log("Processing list of all Todos ...");
+// app.get("/todos", connectEnsureLogin, async function (_request, response) {
+//   console.log("Processing list of all Todos ...");
 
-  try {
-    const todos = await Todo.findAll();
-    response.json(todos);
-  } catch (error) {
-    console.log("Error fetching todos:", error);
-    return response.status(500).json({ error: "Unable to fetch todos" });
-  }
-});
+//   try {
+//     const todos = await Todo.findAll();
+//     response.json(todos);
+//   } catch (error) {
+//     console.log("Error fetching todos:", error);
+//     return response.status(500).json({ error: "Unable to fetch todos" });
+//   }
+// });
 
-app.get("/todos/:id", async function (request, response) {
+app.get("/todos/:id", connectEnsureLogin.ensureLoggedIn(),async function (request, response) {
   try {
     const todo = await Todo.findByPk(request.params.id);
     return response.json(todo);
@@ -178,15 +210,17 @@ app.get("/todos/:id", async function (request, response) {
   }
 });
 
-app.post("/todos", async (request, response) => {
+app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   console.log("Creating a todo", request.body);
   //Todo
   try {
     await Todo.addTodo({
       title: request.body.title,
       dueDate: request.body.dueDate,
+      userId: request.user.id,
+
     });
-    return response.redirect("/");
+    return response.redirect("/todos");
   } catch (error) {
     console.log(error);
     return response.status(422).json();
@@ -194,8 +228,8 @@ app.post("/todos", async (request, response) => {
 });
 
 
-app.put("/todos/:id", async (request, response) => {
-  console.log("/n We have completed a todo with ID:", request.params.id);
+app.put("/todos/:id",connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
+  console.log(" We have completed a todo with ID:", request.params.id);
   const todo = await Todo.findByPk(request.params.id);
   try {
     const completion = await todo.setCompletionStatus(request.body.completed);
@@ -206,7 +240,7 @@ app.put("/todos/:id", async (request, response) => {
   }
 });
 
-app.delete("/todos/:id", async (request, response) => {
+app.delete("/todos/:id",  connectEnsureLogin.ensureLoggedIn(),async (request, response) => {
   try {
     await Todo.remove(request.params.id);
     return response.json({ success: true });
