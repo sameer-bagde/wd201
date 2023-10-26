@@ -154,9 +154,9 @@ app.post("/users", async (request, response) => {
   console.log(request.user);
   try {
     const user = await User.create({
-      firstName: request.body.firstName,
-      lastName: request.body.lastName,
-      email: request.body.email,
+      firstName: firstName,
+      lastName: lastName,
+      email:email,
       password: hashedPwd,
     });
     request.login(user, (err) => {
@@ -211,17 +211,17 @@ app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response
   const { title, dueDate } = request.body;
     if (title.length == 0) {
       request.flash("error", "Title cannot be empty!");
-      return response.redirect("/todo");
+      return response.redirect("/todos");
     }
     if (dueDate.length == 0) {
       request.flash("error", "Due date cannot be empty!");
-      return response.redirect("/todo");
+      return response.redirect("/todos");
     }
     console.log("Creating new todo:", request.body);
     try {
       await Todo.addTodo({
-        title: request.body.title,
-        dueDate: request.body.dueDate,
+        title:title,
+        dueDate:dueDate,
         userId: request.user.id,
       });
       return response.redirect("/todos");

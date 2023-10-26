@@ -72,7 +72,6 @@ function deleteTodo(id) {
                     placeholder="What's next?"
                     name="title"
                     class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm"
-                    required pattern="^(?!\s+$).{2,}$"
                   />
                 </div>
                 <div class="flex-auto">
@@ -80,7 +79,7 @@ function deleteTodo(id) {
                     type="date"
                     name="dueDate"
                     class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4	"
-                    required
+                    
                   />
                 </div>
                 <div class="flex-none">
@@ -98,7 +97,7 @@ function deleteTodo(id) {
           <%- include("todo.ejs",{title:"Due Today", data:dueToday, id:"count-due-today"}) %>
           <%- include("todo.ejs",{title:"Due Later", data:dueLater, id:"count-due-later"}) %>
           <%- include("todo.ejs",{title:"Completed Items", data:completedItems, id:"count-completed"}) %>
-
+<br>
           <div>
             <% if (messages && messages.error && messages.error.length > 0)  { %>
                 <% var i = 0; %>
@@ -108,6 +107,7 @@ function deleteTodo(id) {
                 <% } %>
               <% } %>
         </div>
+        <br>
           <%- include('footer.ejs') %>
 
 </html>
