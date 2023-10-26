@@ -56,8 +56,14 @@ test("Sign up", async () => {
   expect(res.statusCode).toBe(302);
 });
 
-
-
+test("Sign out", async () => {
+  let res = await agent.get("/todos");
+  expect(res.statusCode).toBe(200);
+  res = await agent.get("/signout");
+  expect(res.statusCode).toBe(302);
+  res = await agent.get("/todos");
+  expect(res.statusCode).toBe(302);
+});
 
   test("create a new todo", async () => {
     agent = request.agent(server);
