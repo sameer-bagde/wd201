@@ -177,7 +177,7 @@ app.get("/login", (request, response) => {
 });
 
 
-app.post('/session', passport.authenticate('local', { failureRedirect: '/login' }),  function(request, response) {
+app.post('/session', passport.authenticate('local', { failureRedirect: '/login' , failureFlash: true}),  function(request, response) {
   console.log(request.user)
 	response.redirect('/todos');
 });
