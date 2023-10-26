@@ -209,11 +209,11 @@ app.get("/todos/:id", connectEnsureLogin.ensureLoggedIn(),async function (reques
 
 app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   const { title, dueDate } = request.body;
-    if (title.length == 0) {
+    if (title.length === 0) {
       request.flash("error", "Title cannot be empty!");
       return response.redirect("/todos");
     }
-    if (dueDate.length == 0) {
+    if (dueDate.length === 0) {
       request.flash("error", "Due date cannot be empty!");
       return response.redirect("/todos");
     }
