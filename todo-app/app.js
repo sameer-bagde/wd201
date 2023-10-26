@@ -88,6 +88,16 @@ app.get("/", async (request, response) => {
   });
 });
 
+app.get("/", async (request, response) => { 
+  if(request.isAuthenticated()){
+   return response.redirect("/todos")
+  }
+     response.render("index", { 
+       title: "Todo List", 
+       csrfToken: request.csrfToken(), 
+     }); 
+   });
+
 app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   console.log(request.user);
   const loggedInUser = request.user.id;
@@ -191,7 +201,7 @@ app.get("/signout", (request, response, next) => {
     if (err) {
       return next(err);
     }
-    response.redirect("/");
+    response.redirect("/todos");
   });
 });
 // signout
