@@ -126,19 +126,19 @@ app.get("/signup", (request, response) => {
 
 app.post("/users", async (request, response) => {
   const { email, firstName, lastName, password } = request.body;
-  if (email.length === 0) {
+  if (email.length == 0) {
     request.flash("error", "Email can not be empty!");
     return response.redirect("/signup");
 
   }
 
-  if (firstName.length === 0) {
+  if (firstName.length == 0) {
     request.flash("error", "First name cannot be empty!");
     return response.redirect("/signup");
 
   }
 
-  if (lastName.length === 0) {
+  if (lastName.length == 0) {
     request.flash("error", "Last name cannot be empty!");
     return response.redirect("/signup");
 
@@ -209,11 +209,11 @@ app.get("/todos/:id", connectEnsureLogin.ensureLoggedIn(),async function (reques
 
 app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   const { title, dueDate } = request.body;
-    if (title.length === 0) {
+    if (title.length == 0) {
       request.flash("error", "Title cannot be empty!");
       return response.redirect("/todos");
     }
-    if (dueDate.length === 0) {
+    if (dueDate.length == 0) {
       request.flash("error", "Due date cannot be empty!");
       return response.redirect("/todos");
     }
