@@ -241,8 +241,10 @@ app.put("/todos/:id",connectEnsureLogin.ensureLoggedIn(), async (request, respon
 });
 
 app.delete("/todos/:id",  connectEnsureLogin.ensureLoggedIn(),async (request, response) => {
+  const loggedInUser = request.user.id;
+
   try {
-    await Todo.remove(request.params.id);
+    await Todo.remove(request.params.id, loggedInUser);
     return response.json({ success: true });
   } catch (error) {
     return response.status(422).json(error);
