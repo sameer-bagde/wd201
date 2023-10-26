@@ -149,10 +149,8 @@ app.post("/users", async (request, response) => {
     return response.redirect("/signup");
 
   }
-  
 
   const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
-
   console.log(request.user);
   try {
     const user = await User.create({
@@ -211,7 +209,6 @@ app.get("/todos/:id", connectEnsureLogin.ensureLoggedIn(),async function (reques
 
 app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   const { title, dueDate } = request.body;
-
     if (title.length == 0) {
       request.flash("error", "Title cannot be empty!");
       return response.redirect("/todo");
@@ -235,8 +232,6 @@ app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response
   },
 );
 
-
-
 app.put("/todos/:id",connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
   console.log(" We have completed a todo with ID:", request.params.id);
   const todo = await Todo.findByPk(request.params.id);
@@ -248,7 +243,6 @@ app.put("/todos/:id",connectEnsureLogin.ensureLoggedIn(), async (request, respon
     return response.status(422).json(error);
   }
 });
-
 
 app.delete("/todos/:id",  connectEnsureLogin.ensureLoggedIn(),async (request, response) => {
   const loggedInUser = request.user.id;
