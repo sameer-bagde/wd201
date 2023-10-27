@@ -13,7 +13,6 @@ function extractCsrfToken(res) {
 }
 
 const login = async (agent, username, password) => {
-
   let res = await agent.get("/login");
   let csrfToken = extractCsrfToken(res);
   res = await agent.post("/session").send({
@@ -22,8 +21,6 @@ const login = async (agent, username, password) => {
     _csrf: csrfToken,
   });
 };
-
-
 
 describe("Todo Application", function () {
   beforeAll(async () => {
@@ -41,29 +38,27 @@ describe("Todo Application", function () {
     }
   });
 
-
-  
-test("Sign up", async () => {
-  let res = await agent.get("/signup");
-  const csrfToken = extractCsrfToken(res);
-  res = await agent.post("/users").send({
-    firstName: "Test",
-    lastName: "User A",
-    email: "user.a@test.com",
-    password: "12345678",
-    _csrf: csrfToken,
+  test("Sign up", async () => {
+    let res = await agent.get("/signup");
+    const csrfToken = extractCsrfToken(res);
+    res = await agent.post("/users").send({
+      firstName: "Test",
+      lastName: "User A",
+      email: "user.a@test.com",
+      password: "12345678",
+      _csrf: csrfToken,
+    });
+    expect(res.statusCode).toBe(302);
   });
-  expect(res.statusCode).toBe(302);
-});
 
-test("Sign out", async () => {
-  res = await agent.get("/signout");
-  expect(res.statusCode).toBe(302);
-  res = await agent.get("/todos");
-  expect(res.statusCode).toBe(302);
-  let res = await agent.get("/todos");
-  expect(res.statusCode).toBe(200);
-});
+  test("Sign out", async () => {
+    res = await agent.get("/signout");
+    expect(res.statusCode).toBe(302);
+    res = await agent.get("/todos");
+    expect(res.statusCode).toBe(302);
+    let res = await agent.get("/todos");
+    expect(res.statusCode).toBe(200);
+  });
 
   test("create a new todo", async () => {
     agent = request.agent(server);
@@ -76,7 +71,6 @@ test("Sign out", async () => {
       completed: false,
     });
     expect(res.statusCode).toBe(302);
-
   });
 
   test("Mark a todo as complete", async () => {
@@ -90,10 +84,7 @@ test("Sign out", async () => {
       dueDate: new Date().toISOString(),
       completed: false,
     });
-
-
   });
-
 
   test("should not create a todo item with empty dueDate", async () => {
     agent = request.agent(server);
@@ -106,7 +97,6 @@ test("Sign out", async () => {
       completed: false,
     });
     expect(res.statusCode).toBe(302);
-
   });
 
   test("should  create sample due today item", async () => {
@@ -120,7 +110,6 @@ test("Sign out", async () => {
       completed: false,
     });
     expect(res.statusCode).toBe(302);
-
   });
 
   test("should  create sample due later item", async () => {
@@ -134,9 +123,7 @@ test("Sign out", async () => {
       completed: false,
     });
     expect(res.statusCode).toBe(302);
-
   });
-
 
   test("should  create sample overdue item", async () => {
     agent = request.agent(server);
@@ -149,9 +136,7 @@ test("Sign out", async () => {
       completed: false,
     });
     expect(res.statusCode).toBe(302);
-
   });
-
 
   test("Deletes a todo with the given ID if it exists and sends a boolean response", async () => {
     const res = await agent.get("/todos");
@@ -162,8 +147,6 @@ test("Sign out", async () => {
       completed: false,
       _csrf: csrfToken,
     });
-
-
   });
 
   test("Should toggle a completed item to incomplete when clicked on it", async () => {
@@ -177,7 +160,5 @@ test("Sign out", async () => {
       dueDate: new Date().toISOString(),
       completed: false,
     });
-
   });
 });
-
