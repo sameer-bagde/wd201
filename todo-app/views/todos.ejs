@@ -94,6 +94,7 @@ function deleteTodo(id) {
           <%- include("todo.ejs",{title:"Due Later", data:dueLater, id:"Due Later"}) %>
           <%- include("todo.ejs",{title:"Completed Items", data:completedItems, id:"Completed"}) %>
 <br>
+
           <div>
             <% if (messages && messages.error && messages.error.length > 0)  { %>
                 <% var i = 0; %>
