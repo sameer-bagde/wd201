@@ -54,8 +54,8 @@ function deleteTodo(id) {
   <div class = "grid grid-cols-6">
       <div class = "col-start-3 col-span-2">  
           <%- include('header.ejs') %>
-          <div class="flex-none" align="center">
-            <a href="/signout" method="get">signout</a>
+          <div align="center" class="flex-none">
+            <a href="/signout"class="bg-green-600	text-white px-5 py-1.5 rounded font-medium mr-2 mb-2" >signout</a>
           </div>
           <div>
             <form action="/todos" method="POST">
@@ -67,7 +67,6 @@ function deleteTodo(id) {
                     placeholder="What's next?"
                     name="title"
                     class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm"
-                    required pattern="^(?!\s+$).{2,}$"
                   />
                 </div>
                 <div class="flex-auto">
@@ -75,7 +74,7 @@ function deleteTodo(id) {
                     type="date"
                     name="dueDate"
                     class="border border-gray-300 rounded text-gray-900 w-full p-2 text-sm leading-4	"
-                    required
+                    
                   />
                 </div>
                 <div class="flex-none">
@@ -89,12 +88,11 @@ function deleteTodo(id) {
               </div>
             </form>
           </div>
-          <%- include("todo.ejs",{title:"Overdue", data:overdue , id:"Overdue"}) %>
-          <%- include("todo.ejs",{title:"Due Today", data:dueToday, id:"Due Today"}) %>
-          <%- include("todo.ejs",{title:"Due Later", data:dueLater, id:"Due Later"}) %>
-          <%- include("todo.ejs",{title:"Completed Items", data:completedItems, id:"Completed"}) %>
+          <%- include("todo.ejs",{title:"Overdue", data:overdue , id:"count-overdue"}) %>
+          <%- include("todo.ejs",{title:"Due Today", data:dueToday, id:"count-due-today"}) %>
+          <%- include("todo.ejs",{title:"Due Later", data:dueLater, id:"count-due-later"}) %>
+          <%- include("todo.ejs",{title:"Completed Items", data:completedItems, id:"count-completed"}) %>
 <br>
-
           <div>
             <% if (messages && messages.error && messages.error.length > 0)  { %>
                 <% var i = 0; %>
@@ -106,5 +104,7 @@ function deleteTodo(id) {
         </div>
         <br>
           <%- include('footer.ejs') %>
+
+
 
 </html>
