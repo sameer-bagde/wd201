@@ -12,11 +12,12 @@ module.exports = (sequelize, DataTypes) => {
     static associate(models) {
       // define association here
       Todo.belongsTo(models.User, {
-        foreignKey: "userId",
-        onDelete: "CASCADE",
-      });
+        foreignKey: 'userId',
+        onDelete: 'CASCADE'
+      })
     }
 
+    
     static async remove(id, userId) {
       return this.destroy({
         where: {
@@ -30,13 +31,17 @@ module.exports = (sequelize, DataTypes) => {
       return this.findAll();
     }
 
-    static addTodo({ title, dueDate, userId }) {
+    static addTodo({ title, dueDate, userId  }) {
+      if (!title || !dueDate) {
+        console.log("Title and dueDate required");
+      } else {
         return this.create({
           title: title,
           dueDate: dueDate,
           completed: false,
           userId,
         });
+      }
     }
 
     markAsCompleted() {
@@ -52,6 +57,7 @@ module.exports = (sequelize, DataTypes) => {
         order: [["id", "ASC"]],
       });
     }
+
 
     setCompletionStatus(bool) {
       return this.update({ completed: bool });
@@ -70,6 +76,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
 
+
     static dueToday(userId) {
       return this.findAll({
         where: {
@@ -83,6 +90,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
 
+    
     static dueLater(userId) {
       return this.findAll({
         where: {
