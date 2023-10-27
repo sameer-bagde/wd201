@@ -59,6 +59,10 @@ test("Sign up", async () => {
 test("Sign out", async () => {
   res = await agent.get("/signout");
   expect(res.statusCode).toBe(302);
+  res = await agent.get("/todos");
+  expect(res.statusCode).toBe(302);
+  let res = await agent.get("/todos");
+  expect(res.statusCode).toBe(200);
 });
 
   test("create a new todo", async () => {
@@ -87,6 +91,64 @@ test("Sign out", async () => {
       completed: false,
     });
 
+
+  });
+
+
+  test("should not create a todo item with empty dueDate", async () => {
+    agent = request.agent(server);
+    const res = await agent.get("/todos");
+    const csrfToken = extractCsrfToken(res);
+    const response = await agent.post("/todos").send({
+      _csrf: csrfToken,
+      title: "should not create a todo item with empty dueDate",
+      dueDate: new Date().toISOString(),
+      completed: false,
+    });
+    expect(res.statusCode).toBe(302);
+
+  });
+
+  test("should  create sample due today item", async () => {
+    agent = request.agent(server);
+    const res = await agent.get("/todos");
+    const csrfToken = extractCsrfToken(res);
+    const response = await agent.post("/todos").send({
+      _csrf: csrfToken,
+      title: "should  create sample due today item",
+      dueDate: new Date().toISOString(),
+      completed: false,
+    });
+    expect(res.statusCode).toBe(302);
+
+  });
+
+  test("should  create sample due later item", async () => {
+    agent = request.agent(server);
+    const res = await agent.get("/todos");
+    const csrfToken = extractCsrfToken(res);
+    const response = await agent.post("/todos").send({
+      _csrf: csrfToken,
+      title: "should  create sample due later item",
+      dueDate: new Date().toISOString(),
+      completed: false,
+    });
+    expect(res.statusCode).toBe(302);
+
+  });
+
+
+  test("should  create sample overdue item", async () => {
+    agent = request.agent(server);
+    const res = await agent.get("/todos");
+    const csrfToken = extractCsrfToken(res);
+    const response = await agent.post("/todos").send({
+      _csrf: csrfToken,
+      title: "should  create sample overdue today item",
+      dueDate: new Date().toISOString(),
+      completed: false,
+    });
+    expect(res.statusCode).toBe(302);
 
   });
 
