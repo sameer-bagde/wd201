@@ -20,11 +20,11 @@ sequelize
     console.error("Unable to connect to the database:", error);
   });
 
-  const connect = async () => {
-    return sequelize.authenticate();
-  }
-  
-  module.exports = {
-    connect,
-    sequelize
-  }
+const connect = async () => {
+  return sequelize.authenticate();
+};
+
+module.exports = {
+  connect,
+  sequelize,
+};

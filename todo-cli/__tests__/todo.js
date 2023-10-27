@@ -18,4 +18,3 @@ describe("Todolist Test Suite", () => {
     expect(newTodoItemsCount).toBe(todoItemsCount + 1);
   });
 });
-
