@@ -31,16 +31,12 @@ module.exports = (sequelize, DataTypes) => {
     }
 
     static addTodo({ title, dueDate, userId }) {
-      if (!title || !dueDate) {
-        console.log("Title and dueDate required");
-      } else {
         return this.create({
           title: title,
           dueDate: dueDate,
           completed: false,
           userId,
         });
-      }
     }
 
     markAsCompleted() {
