@@ -52,12 +52,10 @@ describe("Todo Application", function () {
   });
 
   test("Sign out", async () => {
-    res = await agent.get("/signout");
-    expect(res.statusCode).toBe(302);
-    res = await agent.get("/todos");
-    expect(res.statusCode).toBe(302);
-    let res = await agent.get("/todos");
-    expect(res.statusCode).toBe(200);
+    response = await agent.get("/signout");
+    expect(response.statusCode).toBe(302);
+    response = await agent.get("/todos");
+    expect(response.statusCode).toBe(302);
   });
 
   test("create a new todo", async () => {

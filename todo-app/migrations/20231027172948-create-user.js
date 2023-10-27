@@ -1,5 +1,5 @@
-/* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
+/* eslint-disable no-undef */
 'use strict';
 /** @type {import('sequelize-cli').Migration} */
 module.exports = {
