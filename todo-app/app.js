@@ -120,7 +120,9 @@ app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response)
 // signup
 
 app.get("/signup", (request, response) => {
-  response.render("signup", {    csrfToken: request.csrfToken(),
+  response.render("signup", {
+    title: "Signup",
+    csrfToken: request.csrfToken(),
   });
 });
 
@@ -192,7 +194,7 @@ app.get("/signout", (request, response, next) => {
     if (err) {
       return next(err);
     }
-    response.redirect("/todos");
+    response.redirect("/");
   });
 });
 // signout
