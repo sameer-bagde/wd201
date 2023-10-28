@@ -159,7 +159,7 @@ app.post("/users", connectEnsureLogin.ensureLoggedIn(),async (request, response)
       if (err) {
         console.log(err);
       }
-      response.redirect("/todos");
+      response.redirect("/");
     });
   } catch (error) {
     console.log(error);
