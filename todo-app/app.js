@@ -22,15 +22,12 @@ app.use(cookieParser("shh! some secret string"));
 app.use(csrf("this_should_be_32_character_long", ["POST", "PUT", "DELETE"]));
 app.use(flash());
 
-app.use(
-  session({
-    secret: "my-super-secret-key-7218728182782818218782718",
-    cookie: {
-      maxAge: 24 * 60 * 60 * 1000,
-    },
-  }),
-);
-
+app.use(session({
+  secret: "my-super-secret-key-7218728182782818218782718",
+  cookie: {
+    maxAge: 24 * 60 * 60 * 1000,
+  },
+}));
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(function (request, response, next) {
@@ -84,10 +81,9 @@ app.get("/", async (request, response) => {
     title: "Todo Application",
     csrfToken: request.csrfToken(),
   });
-  
 });
-
-app.get("/todos",connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
+  
+app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
     const loggedInUser = request.user.id;
     const allTodos = await Todo.getTodos(loggedInUser);
     const overdue = await Todo.overdue(loggedInUser);
@@ -173,7 +169,7 @@ app.post('/session', passport.authenticate('local', { failureRedirect: '/login' 
 	response.redirect('/todos');
 });
 
-app.get("/signout", (request, response, next) => {
+app.get("/signout", (request, response) => {
   request.logout((err) => {
     if (err) {
       return next(err);
