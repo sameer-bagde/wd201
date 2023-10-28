@@ -77,10 +77,16 @@ passport.deserializeUser((id, done) => {
 
 
 app.get("/", async (request, response) => {
-  response.render("index", {
-    title: "Todo Application",
-    csrfToken: request.csrfToken(),
-  });
+  if (request.isAuthenticated()) {
+    response.redirect("/todos");
+  } else {
+    // Render a login page or any other appropriate content for non-logged-in users
+    response.render("index", {
+      title: "Todo Application",
+      csrfToken: request.csrfToken(),
+    });
+  }
+
 });
   
 app.get("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
