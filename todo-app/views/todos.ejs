@@ -55,6 +55,8 @@ function deleteTodo(id) {
       <div class = "col-start-3 col-span-2">  
         <table>
           <%- include('header.ejs') %>
+          <%- include('notifications.ejs') %>
+
           <div>
             <form action="/todos" method="POST">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
