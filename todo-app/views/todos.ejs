@@ -86,12 +86,11 @@ function deleteTodo(id) {
               </div>
             </form>
           </div>
-          <%- include("todo.ejs",{title:"Overdue", data:overdue , id:"Overdue"}) %>
-          <%- include("todo.ejs",{title:"Due Today", data:dueToday, id:"Due Today"}) %>
-          <%- include("todo.ejs",{title:"Due Later", data:dueLater, id:"Due Later"}) %>
-          <%- include("todo.ejs",{title:"Completed Items", data:completedItems, id:" Completed"}) %>
-<br>
-          <div>
+          <%- include("todo.ejs",{title:"Overdue", data:overdue , id:"count-overdue"}) %>
+          <%- include("todo.ejs",{title:"Due Today", data:dueToday, id:"count-due-today"}) %>
+          <%- include("todo.ejs",{title:"Due Later", data:dueLater, id:"count-due-later"}) %>
+          <%- include("todo.ejs",{title:"Completed Items", data:completedItems, id:"count-completed"}) %>
+          <br>
             <% if (messages && messages.error && messages.error.length > 0)  { %>
                 <% var i = 0; %>
                 <% while (i < messages.error.length) { %>
@@ -99,10 +98,10 @@ function deleteTodo(id) {
                   <% i++; %>
                 <% } %>
               <% } %>
-        </div>
+
         <br>
           <%- include('footer.ejs') %>
-
+        
           <div align="center" class="flex-none">
             <a href="/signout" method="delete" class="bg-green-600	text-white px-5 py-1.5 rounded font-medium mr-2 mb-2">signout</a>
           </div>
