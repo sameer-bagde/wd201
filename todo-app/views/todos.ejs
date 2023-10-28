@@ -53,6 +53,7 @@ function deleteTodo(id) {
 <body> 
   <div class = "grid grid-cols-6">
       <div class = "col-start-3 col-span-2">  
+        <table>
           <%- include('header.ejs') %>
           <div>
             <form action="/todos" method="POST">
@@ -105,5 +106,5 @@ function deleteTodo(id) {
           <div align="center" class="flex-none">
             <a href="/signout" method="delete">signout</a>
           </div>
-
+        </table>
 </html>

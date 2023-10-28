@@ -85,6 +85,7 @@ app.get("/", async (request, response) => {
   if(request.isAuthenticated()){
     return response.redirect("/todos")
    }
+   console.log(request,isAuthenticated());
   response.render("index", {
     title: "Todo Application",
     csrfToken: request.csrfToken(),
@@ -127,39 +128,35 @@ app.get("/signup", (request, response) => {
 });
 
 
-app.post("/users", async (request, response) => {
+app.post("/users", connectEnsureLogin.ensureLoggedIn(),async (request, response) => {
   const { email, firstName, lastName, password } = request.body;
   if (email.length === 0) {
-    request.flash("error", "Email can not be empty!");
+    request.flash("error", "Email cannot be empty!");
     return response.redirect("/signup");
-
   }
 
   if (firstName.length === 0) {
     request.flash("error", "First name cannot be empty!");
     return response.redirect("/signup");
-
   }
 
   if (lastName.length === 0) {
     request.flash("error", "Last name cannot be empty!");
     return response.redirect("/signup");
-
   }
 
   if (password.length < 8) {
     request.flash("error", "Password must be at least 8 characters");
     return response.redirect("/signup");
-
   }
 
   const hashedPwd = await bcrypt.hash(request.body.password, saltRounds);
-  console.log(request.user);
+
   try {
     const user = await User.create({
       firstName: firstName,
       lastName: lastName,
-      email:email,
+      email: email,
       password: hashedPwd,
     });
     request.login(user, (err) => {
@@ -172,6 +169,7 @@ app.post("/users", async (request, response) => {
     console.log(error);
   }
 });
+
 // signup
 
 // login
@@ -211,6 +209,7 @@ app.get("/todos/:id", connectEnsureLogin.ensureLoggedIn(),async function (reques
 
 
 app.post("/todos", connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
+  console.log(request.user);
   const { title, dueDate } = request.body;
     if (title.length === 0) {
       request.flash("error", "Title cannot be empty!");
