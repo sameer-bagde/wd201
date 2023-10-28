@@ -54,9 +54,6 @@ function deleteTodo(id) {
   <div class = "grid grid-cols-6">
       <div class = "col-start-3 col-span-2">  
           <%- include('header.ejs') %>
-          <div align="center" class="flex-none">
-            <a href="/signout"class="bg-green-600	text-white px-5 py-1.5 rounded font-medium mr-2 mb-2" >signout</a>
-          </div>
           <div>
             <form action="/todos" method="POST">
               <input type="hidden" name="_csrf" value="<%= csrfToken %>" />
@@ -105,6 +102,8 @@ function deleteTodo(id) {
         <br>
           <%- include('footer.ejs') %>
 
-
+          <div align="center" class="flex-none">
+            <a href="/signout" method="delete">signout</a>
+          </div>
 
 </html>
