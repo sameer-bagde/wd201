@@ -84,6 +84,7 @@ app.get("/", async (request, response) => {
     title: "Todo Application",
     csrfToken: request.csrfToken(),
   });
+  
 });
 
 app.get("/todos",connectEnsureLogin.ensureLoggedIn(), async (request, response) => {
