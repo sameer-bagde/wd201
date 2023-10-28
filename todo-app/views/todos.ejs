@@ -85,10 +85,10 @@ function deleteTodo(id) {
               </div>
             </form>
           </div>
-          <%- include("todo.ejs",{title:"Overdue", data:overdue , id:"count-overdue"}) %>
-          <%- include("todo.ejs",{title:"Due Today", data:dueToday, id:"count-due-today"}) %>
-          <%- include("todo.ejs",{title:"Due Later", data:dueLater, id:"count-due-later"}) %>
-          <%- include("todo.ejs",{title:"Completed Items", data:completedItems, id:"count-completed"}) %>
+          <%- include("todo.ejs",{title:"Overdue", data:overdue , id:"Overdue"}) %>
+          <%- include("todo.ejs",{title:"Due Today", data:dueToday, id:"Due Today"}) %>
+          <%- include("todo.ejs",{title:"Due Later", data:dueLater, id:"Due Later"}) %>
+          <%- include("todo.ejs",{title:"Completed Items", data:completedItems, id:" Completed"}) %>
 <br>
           <div>
             <% if (messages && messages.error && messages.error.length > 0)  { %>
