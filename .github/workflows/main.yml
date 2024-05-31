@@ -41,7 +41,7 @@ jobs:
         run: cd l10 && npm ci
 
       - name: Run unit tests
-        run: cd l10 && npm test
+        run: cd todo-app && npm test
       - name: Run the app
         id: run-app
         run: |
@@ -55,6 +55,6 @@ jobs:
 
       - name: Run integration tests
         run: |
-          cd l10
+          cd todo-app
           npm install cypress cypress-json-results
           npx cypress run --env STUDENT_SUBMISSION_URL="http://localhost:3000/"

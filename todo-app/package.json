@@ -1,6 +1,7 @@
 {
   "devDependencies": {
     "cheerio": "^1.0.0-rc.12",
+    "cypress": "^13.10.0",
     "ejs": "^3.1.9",
     "eslint": "^8.50.0",
     "husky": "^8.0.3",
@@ -23,7 +24,11 @@
     "start:prod": "node index.js",
     "pretest": "NODE_ENV=test npx sequelize-cli db:drop && npx sequelize-cli db:create",
     "test": "NODE_ENV=test jest --detectOpenHandles",
-    "prepare": "cd .. && husky install todo-app/.husky"
+    "prepare": "cd .. && husky install todo-app/.husky",
+    "clean:start": "NODE_ENV=test npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npm start",
+    "cy:test": "npx cypress run"
+
+
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
