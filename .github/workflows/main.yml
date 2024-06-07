@@ -47,7 +47,7 @@ jobs:
       - name: Run the app
         id: run-app
         run: |
-          cd todo-app
+          cd l10
           npm install
           npx sequelize-cli db:drop
           npx sequelize-cli db:create
