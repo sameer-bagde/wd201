@@ -15,7 +15,16 @@
     "logging": false
   },
   "production": {
-    "use_env_variable": "DATABASE_URL",
-    "dialect": "postgres"
+    "username": "avnadmin",
+    "password": "AVNS_Fp2k_kDDdGq0fln-Djw",
+    "database": "defaultdb",
+    "host": "pg-24cc83d9-bagdesameer92-369f.f.aivencloud.com",
+    "port": 21095,
+    "dialect": "postgres",
+    "dialectOptions": {
+      "ssl": {
+        "require": true
+      }
+    }
   }
 }
