@@ -1,9 +1,11 @@
 name: Auto test Todo project
-on: push
+on: 
+  push : 
+    branches: ['main']
 env:
-  PG_DATABASE: wd-todo-db
-  PG_USER: postgres
-  PG_PASSWORD: 176217
+  PG_DATABASE: ${{ secrets.PG_DATABASE }}
+  PG_USER: ${{ secrets.PG_USER }}
+  PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
 jobs:
   # Label of the container job
   run-tests:
@@ -18,9 +20,9 @@ jobs:
         image: postgres:11.7
         # Provide the password for postgres
         env:
-          POSTGRES_USER: postgres
-          POSTGRES_PASSWORD: 176217
-          POSTGRES_DB: wd-todo-db
+          PG_DATABASE: ${{ secrets.PG_DATABASE }}
+          PG_USER: ${{ secrets.PG_USER }}
+          PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
         # Set health checks to wait until postgres has started
         options: >-
           --health-cmd pg_isready
@@ -58,3 +60,14 @@ jobs:
           cd todo-app
           npm install cypress cypress-json-results
           npx cypress run --env STUDENT_SUBMISSION_URL="http://localhost:3000/"
+
+          
+  deploy:
+            name: Deploy
+            runs-on: ubuntu-latest
+            steps: 
+              - name: Deploy
+                uses: johnbeynon/render-deploy-action@v0.0.8
+                with:
+                  service-id: ${{ secrets.SERVICE_ID }} # Can be found as part of the Deploy Hook
+                  api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings

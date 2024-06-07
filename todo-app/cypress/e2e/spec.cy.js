@@ -1,3 +1,4 @@
+/* eslint-disable no-undef */
 describe("Todo Application", () => {
   const url = "http://localhost:3000";
   beforeEach(() => {
