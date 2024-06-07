@@ -2,29 +2,19 @@
   "development": {
     "username": "postgres",
     "password": "176217",
-    "database": "wd-todo-db",
+    "database": "wd_todo-db",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "test": {
     "username": "postgres",
     "password": "176217",
-    "database": "wd-todo-db",
+    "database": "wd_todo-db",
     "host": "127.0.0.1",
-    "dialect": "postgres",
-    "logging": false
+    "dialect": "postgres"
   },
   "production": {
-    "username": "avnadmin",
-    "password": "AVNS_Fp2k_kDDdGq0fln-Djw",
-    "database": "defaultdb",
-    "host": "pg-24cc83d9-bagdesameer92-369f.f.aivencloud.com",
-    "port": 21095,
-    "dialect": "postgres",
-    "dialectOptions": {
-      "ssl": {
-        "require": true
-      }
-    }
+    "use_env_variable": "DATABASE_URL",
+    "dialect": "postgres"
   }
 }
