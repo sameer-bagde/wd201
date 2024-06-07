@@ -25,6 +25,7 @@
     "start:prod": "node index.js",
     "pretest": "NODE_ENV=test npx sequelize-cli db:drop && npx sequelize-cli db:create",
     "test": "NODE_ENV=test jest --detectOpenHandles",
+    "deploy": "NODE_ENV=production  npx sequelize-cli db:create && npx sequelize-cli db:migrate",
     "prepare": "cd .. && husky install todo-app/.husky",
     "clean:start": "NODE_ENV=test npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npm start",
     "cy:test": "npx cypress run",
