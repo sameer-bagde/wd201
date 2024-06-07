@@ -10,7 +10,7 @@
     "nodemon": "^3.0.1",
     "prettier": "^3.0.3",
     "sequelize": "^6.37.3",
-    "sequelize-cli": "^6.6.1",
+    "sequelize-cli": "^6.6.2",
     "tailwindcss": "^3.3.3"
   },
   "lint-staged": {
@@ -27,8 +27,6 @@
     "prepare": "cd .. && husky install todo-app/.husky",
     "clean:start": "NODE_ENV=test npx sequelize-cli db:drop && npx sequelize-cli db:create && npx sequelize-cli db:migrate && npm start",
     "cy:test": "npx cypress run"
-
-
   },
   "dependencies": {
     "bcrypt": "^5.1.1",
