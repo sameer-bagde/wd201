@@ -1,9 +1,9 @@
 name: Auto test Todo project
 on: push
 env:
-  PG_DATABASE: wd-todo-db
-  PG_USER: postgres
-  PG_PASSWORD: 176217
+  PG_DATABASE: "${{ secrets.POSTGRES_DATABASE }}"
+  PG_USER: "${{ secrets.POSTGRES_USER }}"
+  PG_PASSWORD: "${{ secrets.POSTGRES_PASSWORD }}"
 jobs:
   # Label of the container job
   run-tests:
