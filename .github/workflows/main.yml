@@ -1,73 +1,73 @@
 name: Auto test Todo project
-on: 
-  push : 
-    branches: ['main']
+on:
+ push:
+   branches: ['main']
+
 env:
-  PG_DATABASE: ${{ secrets.PG_DATABASE }}
-  PG_USER: ${{ secrets.PG_USER }}
-  PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+ PG_DATABASE: ${{ secrets.PG_DATABASE }}
+ PG_USER: ${{ secrets.PG_USER }}
+ PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
+
 jobs:
-  # Label of the container job
-  run-tests:
-    # Containers must run in Linux based operating systems
-    runs-on: ubuntu-latest
 
-    # Service containers to run with `container-job`
-    services:
-      # Label used to access the service container
-      postgres:
-        # Docker Hub image
-        image: postgres:11.7
-        # Provide the password for postgres
-        env:
-          PG_DATABASE: ${{ secrets.PG_DATABASE }}
-          PG_USER: ${{ secrets.PG_USER }}
-          PG_PASSWORD: ${{ secrets.PG_PASSWORD }}
-        # Set health checks to wait until postgres has started
-        options: >-
-          --health-cmd pg_isready
-          --health-interval 10s
-          --health-timeout 5s
-          --health-retries 5
-        ports:
-          - 5432:5432
+ # Label of the container job
+ run-tests:
+   # Containers must run in Linux based operating systems
+   runs-on: ubuntu-latest
 
-    steps:
-      # Downloads a copy of the code in your repository before running CI tests
-      - name: Check out repository code
-        uses: actions/checkout@v3
+   # Service containers to run with `container-job`
+   services:
+     # Label used to access the service container
+     postgres:
+       # Docker Hub image
+       image: postgres:11.7
+       env:
+         POSTGRES_PASSWORD: ${{ secrets.PG_PASSWORD }}
+       # Set health checks to wait until postgres has started
+       options: >-
+         --health-cmd pg_isready
+         --health-interval 10s
+         --health-timeout 5s
+         --health-retries 5
+       ports:
+         - 5432:5432
 
-      # Performs a clean installation of all dependencies in the `package.json` file
-      # For more information, see https://docs.npmjs.com/cli/ci.html
-      - name: Install dependencies
-        run: cd todo-app && npm i
+   steps:
+     # Downloads a copy of the code in your repository before running CI tests
+     - name: Check out repository code
+       uses: actions/checkout@v3
 
-      - name: Run unit tests
-        run: cd todo-app && npm test
-      - name: Run the app
-        id: run-app
-        run: |
-          cd l10
-          npm install
-          npx sequelize-cli db:drop
-          npx sequelize-cli db:create
-          npx sequelize-cli db:migrate
-          PORT=3000 npm start &
-          sleep 5
+     # Performs a clean installation of all dependencies in the `package.json` file
+     # For more information, see https://docs.npmjs.com/cli/ci.html
+     - name: Install dependencies
+       run: cd todo-app && npm ci
 
-      - name: Run integration tests
-        run: |
-          cd todo-app
-          npm install cypress cypress-json-results
-          npx cypress run --env STUDENT_SUBMISSION_URL="http://localhost:3000/"
+     - name: Run unit tests
+       run: cd todo-app && npm test
 
-          
-  deploy:
-            name: Deploy
-            runs-on: ubuntu-latest
-            steps: 
-              - name: Deploy
-                uses: johnbeynon/render-deploy-action@v0.0.8
-                with:
-                  service-id: ${{ secrets.SERVICE_ID }} # Can be found as part of the Deploy Hook
-                  api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings
+     - name: Run the app
+       id: run-app
+       run: |
+         cd l10
+         npm ci
+         npx sequelize-cli db:drop
+         npx sequelize-cli db:create
+         npx sequelize-cli db:migrate
+         PORT=3000 npm start &
+         sleep 5
+
+     - name: Run integration tests
+       run: |
+         cd todo-app
+         npm ci cypress cypress-json-results
+         npx cypress run --env STUDENT_SUBMISSION_URL="http://localhost:3000/"
+
+ deploy:
+   name: Deploy
+   runs-on: ubuntu-latest
+   steps:
+     - name: Deploy
+       uses: johnbeynon/render-deploy-action@v0.0.8
+       with:
+         service-id: ${{ secrets.SERVICE_ID }} # Can be found as part of the Deploy Hook
+         api-key: ${{ secrets.RENDER_API_KEY }} # Create your API key in Render Dashboard > Account Settings
